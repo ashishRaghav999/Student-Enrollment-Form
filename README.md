@@ -22,3 +22,9 @@ JsonPowerDB is a Database Server with Developer friendly REST API services. It's
 
 Release History
                          :      -> Version 1.0 on 21/01/2023
+
+
+Other: 
+
+
+                         :      ->The micro project that I've created have a issue that is not allowing to update the data as status 200 is not coming.
