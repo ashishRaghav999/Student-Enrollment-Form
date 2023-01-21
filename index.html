@@ -1,0 +1,250 @@
+<!--
+    
+    Student Enrollment Form that will store data in STUDENT-TABLE relation of SCHOOL-DB database.
+    
+    Input Fields: {Roll-No, Full-Name, Class, Birth-Date, Address, Enrollment-Date}
+    
+    Primary key: Roll No.
+    
+    
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Bootstrap Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="http://login2explore.com/jpdb/resources/js/0.0.3/jpdb-commons.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Student registration form</h2>
+        <form id="empForm" method="get">
+            <div class="form-group">
+                <span><label for="StdRoll">Roll No.</label> <label id="empIdMsg">
+                    </label></span>
+                <input type="text" class="form-control" name="StdRoll" id="StdRoll" placeholder="Enter Student Roll No."
+                    required onchange="getEmp()">
+            </div>
+            <div class="form-group">
+                <label for="StddName">Full Name</label>
+                <input type="text" class="form-control" id="StddName" placeholder="Enter Student Full Name"
+                    name="StddName">
+            </div>
+            <div class="form-group">
+                <label for="StdClass">Class</label>
+                <input type="text" class="form-control" id="StdClass" placeholder="Enter Student Class" name="StdClass">
+            </div>
+            <div class="form-group">
+                <label for="StdBirth">Birth Date</label>
+                <input type="text" class="form-control" id="StdBirth" placeholder="Enter Student Birth Date"
+                    name="StdBirth">
+            </div>
+
+            <div class="form-group">
+                <label for="StdAdd">Address</label>
+                <input type="text" class="form-control" id="StdAdd" placeholder="Enter Student Address" name="StdAdd">
+            </div>
+
+            <div class="form-group">
+                <label for="StdEnr">Enrollment Date</label>
+                <input type="text" class="form-control" id="StdEnr" placeholder="Enter Student Enrollment-Date"
+                    name="StdEnr">
+            </div>
+
+            <div class="form-group text-center">
+                <input type="button" class="btn btn-lg btn-primary" id="save" value="Save" onclick="saveData()"
+                    disabled>
+
+                <input type="button" class="btn btn-lg btn-primary" id="change" value="change" onclick="changeData()"
+                    disabled>
+
+                <input type="button" class="btn btn-lg btn-primary" id="reset" value="reset" onclick="resetForm()"
+                    disabled>
+            </div>
+        </form>
+    </div>
+
+
+
+
+
+
+
+
+
+
+    <script>
+        $("#StdRoll").focus();
+        
+
+        var BaseURL = 'http://api.login2explore.com:5577';
+        var IRL = '/api/irl';
+        var iml = '/api/iml';
+        var Db = 'Std_Data';
+        var rel = 'Std_rel';
+        var token = '90932374|-31949271607907476|90953872';
+
+        function validateAndGetFormData() {
+            var StRoll = $("#StdRoll").val();
+            if (StRoll === "") {
+                alert("Student Roll No. required");
+                $("#StdRoll").focus();
+                return "";
+            }
+            var StddName = $("#StddName").val();
+            if (StddName === "") {
+                alert("Student Name required");
+                $("#StddName").focus();
+                return "";
+            }
+            var StClass = $("#StdClass").val();
+            if (StClass === "") {
+                alert("Student Class required");
+                $("#StdClass").focus();
+                return "";
+            }
+            var StBirth = $("#StdBirth").val();
+            if (StBirth === "") {
+                alert("Student Birth Date required");
+                $("#StBirth").focus();
+                return "";
+            }
+            var StAdd = $("#StdAdd").val();
+            if (StAdd === "") {
+                alert("Student Address required");
+                $("#StdAdd").focus();
+                return "";
+            }
+            var StEnr = $("#StdEnr").val();
+            if (StEnr === "") {
+                alert("Student Enrollment Date required");
+                $("#StdEnr").focus();
+                return "";
+            }
+
+
+            var jsonStrObj = {
+                StdRoll: StRoll,
+                StddName: StddName,
+                StdClass: StClass,
+                StdBirth: StBirth,
+                StdAdd: StAdd,
+                StdEnr: StEnr,
+            };
+            return JSON.stringify(jsonStrObj);
+        }
+
+
+        function getEmpIdAsJsonObj() {
+            var StdRoll = $("#StdRoll").val();
+            var jsonStr = {
+                id: StdRoll
+            };
+            return JSON.stringify(jsonStr);
+        }
+
+        function getEmp() {
+          
+            var empIdJsonObj = getEmpIdAsJsonObj();
+            var getRequest = createGET_BY_KEYRequest(token, Db, rel, empIdJsonObj);
+            jQuery.ajaxSetup({ async: false });
+            var resultObj = executeCommandAtGivenBaseUrl(getRequest, BaseURL,IRL);
+         
+            jQuery.ajaxSetup({ async: true });
+            if (resultObj.status === 400) {
+                $("#save").prop("disabled", false);
+                $("#reset").prop("disabled", false);
+                $("#StddName").focus();
+            }
+            if (resultObj.status === 200) {
+
+                $("#StdRoll").prop("disabled", true);
+                fillData(resultObj);
+
+                $("#change").prop("disabled", false);
+                $("#reset").prop("disabled", false);
+                $("#StddName").focus();
+
+
+            }
+
+        }
+
+        
+
+
+        function fillData(resultObj){
+            
+
+            var record = JSON.parse(resultObj.data);
+            localStorage.setItem('recordNo', record.rec_no);
+            var record= JSON.parse(resultObj.data).record;
+
+            $('#StdRoll').val((record.StdRoll));
+            $('#StddName').val((record.StddName));
+            $('#StdClass').val((record.StdClass));
+            $('#StdBirth').val((record.StdBirth));
+            $('#StdAdd').val((record.StdAdd));
+            $('#StdEnr').val((record.StdEnr));
+
+        }
+
+
+
+        function resetForm() {
+            $("#StdRoll").val("");
+            $("#StddName").val("");
+            $("#StdClass").val("");
+            $("#StdBirth").val("");
+            $("#StdAdd").val("");
+            $("#StdEnr").val("");
+
+            $("#StdRoll").prop("disabled", false);
+            $("#save").prop("disabled", true);
+            $("#change").prop("disabled", true);
+            $("#reset").prop("disabled", true);
+
+            $("#StdRoll").focus();
+        }
+
+
+
+
+        function saveData() {
+            var jsonStr = validateAndGetFormData();
+            if (jsonStr === "") {
+                return;
+            }
+            var putReqStr = createPUTRequest(token, jsonStr, Db, rel);
+            alert(putReqStr);
+            jQuery.ajaxSetup({ async: false });
+            var resultObj = executeCommandAtGivenBaseUrl(putReqStr, BaseURL, iml);
+            alert(JSON.stringify(resultObj));
+            jQuery.ajaxSetup({ async: true });
+            resetForm();
+            $("#StdRoll").focus();
+        }
+
+        function changeData() {
+            $("#change").prop("disabled", true);
+            var jsonChg = validateAndGetFormData();
+            var UpdateRequest = createUPDATERecordRequest(token, jsonChg, Db, rel);
+            jQuery.ajaxSetup({ async: false });
+            var resultObj = executeCommandAtGivenBaseUrl(UpdateRequest, BaseURL, iml);
+            jQuery.ajaxSetup({ async: true });
+            resetForm();
+            $("#StdRoll").focus();
+        }
+    </script>
+
+
+</body>
+
+</html>
