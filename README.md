@@ -10,7 +10,15 @@ Benefits of using JsonPowerDB :
 
 
                          :      -> Simple to use and real time. 
+                                -> Proprietary algorithm for High Performance CRUD operations. Multiple times faster than popular DBMS.
                                 -> Serverless support: fast development 
                                 -> NoSQL and that's why best in performance.
                                 -> Multi-Mode databases
                                 -> Webservices API - that leads low development cost
+                                
+JsonPowerDB is a Database Server with Developer friendly REST API services. It's a High Performance, Light Weight, Ajax Enabled, Serverless, Simple to Use, Real-time Database.
+
+
+
+Release History
+                         :      -> Version 1.0 on 21/01/2023
